@@ -33,6 +33,20 @@ var showMainScreen = function() {
     var width = win.width;
     var height = win.height;
     
+    // Get roadtrip of user
+    var roadTripClass = Parse.Object.extend("Roadtrip");
+    var query = new Parse.Query(roadTripClass);
+    query.find({
+        success: function(results) {
+            var roadTrip = results[0];
+            $.title.text = roadTrip.get('title');
+        },
+        error: function(error) {
+            alert('No roadtrip found');
+        }
+    });
+
+    
     // Take photo
     $.takePhoto.addEventListener('click', function(e) {
         require('cameraService').getPhoto().then(function(_response) {

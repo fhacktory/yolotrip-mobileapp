@@ -1,4 +1,7 @@
 ".container": {
-	backgroundColor:"white",
-	layout: 'vertical'
+	backgroundColor:"#141925"
+}
+
+"#title": {
+    font: {fontSize: '30dp'}
 }

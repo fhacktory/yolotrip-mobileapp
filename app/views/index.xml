@@ -1,8 +1,9 @@
 <Alloy>
 	<Window class="container">
-	    <View class="layoutTop">
+        <View class="layoutTop">
+            <Label id="title">Loading roadtrip...</Label>
             <Button id="takePhoto" title="Take photo" />
             <Button id="openMap" title="Map" />
-	    </View>
+        </View>
 	</Window>
 </Alloy>
