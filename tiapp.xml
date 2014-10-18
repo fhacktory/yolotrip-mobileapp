@@ -48,9 +48,11 @@
         <theme>default</theme>
     </mobileweb>
     <modules>
-        <module platform="iphone">ti.map</module>
-        <module platform="android">ti.map</module>
-    </modules>
+    <module platform="android">facebook</module>
+    <module platform="iphone">facebook</module>
+    <module platform="iphone">ti.imagefactory</module>
+    <module platform="android">ti.imagefactory</module>
+  </modules>
     <deployment-targets>
         <target device="android">true</target>
         <target device="blackberry">false</target>

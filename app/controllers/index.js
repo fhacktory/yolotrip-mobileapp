@@ -1,41 +1,54 @@
+require('ti.parse_mine')(Alloy.CFG.parseOptions);
 var win = $.index;
 var width = win.width;
 var height = win.height;
 
+// Test resize
+/*
+require('cameraService').getPhoto().then(function(_response) {
+
+}, function(_error) {
+    Ti.API.info(_error);
+    alert(_error.msg);
+});
+*/
+    
 $.takePhoto.addEventListener('click', function(e) {
-	Titanium.Media.showCamera({
-    	success:function(event) {
-    		// called when media returned from the camera
-    		Ti.API.debug('Our type was: '+event.mediaType);
-    		if(event.mediaType == Ti.Media.MEDIA_TYPE_PHOTO) {
-    			var imageView = Ti.UI.createImageView({
-    				width: width,
-    				height: height,
-    				image: event.media
-    			});
-    			win.add(imageView);
-    		} else {
-    			alert("got the wrong type back ="+event.mediaType);
-    		}
-    	},
-    	cancel:function() {
-    		// called when user cancels taking a picture
-    	},
-    	error:function(error) {
-    		// called when there's an error
-    		var a = Titanium.UI.createAlertDialog({title:'Camera'});
-    		if (error.code == Titanium.Media.NO_CAMERA) {
-    			a.setMessage('Please run this test on device');
-    		} else {
-    			a.setMessage('Unexpected error: ' + error.code);
-    		}
-    		a.show();
-    	},
-    	saveToPhotoGallery:true,
-    	// allowEditing and mediaTypes are iOS-only settings
-    	allowEditing:true,
-    	mediaTypes:[Ti.Media.MEDIA_TYPE_VIDEO,Ti.Media.MEDIA_TYPE_PHOTO]
-	});
+    require('cameraService').getPhoto().then(function(_response) {
+        try {
+            var imageFactory = require('ti.imagefactory');
+            var imageBlob = _response.media;
+            var smallImage = null;
+            var heightOfImage = imageBlob.height;  
+            var widthOfImage = imageBlob.width;
+            var aspectRatio =  heightOfImage / widthOfImage;
+            
+            if (widthOfImage > 640) {
+                var newWidth = 640;
+                var newHieght = newWidth*aspectRatio;
+                
+                Ti.API.info('Resizing image from ' + widthOfImage + ', ' + heightOfImage + ' to ' + newWidth + ', ' + newHieght);
+                
+                var smallImage = imageFactory.imageAsResized(imageBlob, {
+                        width: newWidth,
+                        height: newHieght,
+                        quality: imageFactory.QUALITY_MEDIUM
+                });
+            }
+            
+            return require('photoService').savePhoto({
+                media : smallImage ? smallImage : imageBlob
+            });
+        } catch (e) {
+            Ti.API.info(e);
+        }
+    }).then(function(_saveResult) {
+      Ti.API.info(JSON.stringify(_saveResult, null, 2));
+      alert('Image uploaded');
+    }, function(_error) {
+        Ti.API.info(_error);
+        alert(_error.msg);
+    });
 });
 
 $.openMap.addEventListener('click', function(e) {

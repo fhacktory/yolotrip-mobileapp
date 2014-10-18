@@ -1,9 +1,11 @@
 "Window": {
     navBarHidden: false,
     exitOnClose: false,
-    translucent: false
+    translucent: false,
+    layout: 'vertical'
 }
 
 ".layoutTop": {
-    top: '20dp'
+    top: '20dp',
+    layout: 'vertical'
 }
