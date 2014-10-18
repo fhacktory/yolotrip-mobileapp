@@ -1,11 +1,11 @@
 {
 	"global": {
         "parseOptions": {
-            "facebookAppId": "",
+            "facebookAppId": "test",
             "applicationId": "nv6txND3tt0ZovoGcLIz2Tv5HA3DADWEICf7zVfu",
             "javascriptkey": "qfPy6bjlKBlwmLNgyRxyeBkpiQIu5ntmqx5DlAkY"
         }
-	}, 
+	},
 	"env:development": {}, 
 	"env:test": {}, 
 	"env:production": {}, 
