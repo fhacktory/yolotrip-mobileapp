@@ -2,7 +2,7 @@
 	<Window class="container">
         <View class="layoutTop">
             <Label id="title">Loading roadtrip...</Label>
-            <Button id="takePhoto" title="Take photo" />
+            <Button id="updateMyTrip" title="Update my trip" />
             <Button id="openMap" title="Map" />
         </View>
 	</Window>

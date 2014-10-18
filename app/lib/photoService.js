@@ -10,18 +10,21 @@ exports.savePhoto = function(_options) {
   var deferred = Q.defer();
   var b64 = Titanium.Utils.base64encode(_options.media);
 
-  var file = new Parse.File(_options.fileName || "myfile.jpg", {
+  var file = new Parse.File(_options.fileName || "photo.jpg", {
     base64 : b64.getText()
   });
 
   file.save().then(function(_result) {
     // The file has been saved to Parse.
-    //Ti.API.debug('_result: ' + JSON.stringify(_result, null, 2));
-    var testObject = new Parse.Object("TestObject");
-    testObject.set("aFile", file);
-    return testObject.save();
+    var photo = new Parse.Object("Photo");
+    photo.set("file", file);
+    if (_options.location) {
+        photo.relation('location').add(_options.location);
+        Ti.App.fireEvent('app:uploadingPhoto', {location: _options.location});
+    }
+    
+    return photo.save();
   }).then(function(_result2) {
-   // Ti.API.info('_result2: ' + JSON.stringify(_result2, null, 2));
     deferred.resolve({
       success : true,
       model : _result2

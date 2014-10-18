@@ -217,17 +217,15 @@ $.open = function(){
 	
 
 	if(OS_IOS){
-		setTimeout(function() {
-				// timeout only to delay initial animation (fake start)
-				$.loginContainer.animate({
-					height: settings.allowFacebook ? 500 : 440,
-					duration: 250
-				}, function() {
-					$.loginView.animate({ opacity:1.0, duration:250 });
-					//$.divider.animate({ opacity:1.0, duration: 250 });
-					$.loginContainer.height = settings.allowFacebook ? 500 : 440;
-				});
-		}, 1000);
+		// timeout only to delay initial animation (fake start)
+		$.loginContainer.animate({
+			height: settings.allowFacebook ? 500 : 440,
+			duration: 250
+		}, function() {
+			$.loginView.animate({ opacity:1.0, duration:250 });
+			//$.divider.animate({ opacity:1.0, duration: 250 });
+			$.loginContainer.height = settings.allowFacebook ? 500 : 440;
+		});
 	} else {
 		$.loginContainer.height  = settings.allowFacebook ? 500 : 440; 
 		$.loginView.opacity = 1.0;
