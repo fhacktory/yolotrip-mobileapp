@@ -1,17 +1,19 @@
 {
-	"global": {
-        "parseOptions": {
-            "facebookAppId": "test",
-            "applicationId": "nv6txND3tt0ZovoGcLIz2Tv5HA3DADWEICf7zVfu",
-            "javascriptkey": "qfPy6bjlKBlwmLNgyRxyeBkpiQIu5ntmqx5DlAkY"
-        }
-	},
-	"env:development": {}, 
-	"env:test": {}, 
-	"env:production": {}, 
-	"os:android": {},
-	"os:blackberry": {},
-	"os:ios": {},
-	"os:mobileweb": {},
-	"dependencies": {}
+  "global": {
+    "parseOptions": {
+      "facebookAppId": "test",
+      "applicationId": "nv6txND3tt0ZovoGcLIz2Tv5HA3DADWEICf7zVfu",
+      "javascriptkey": "qfPy6bjlKBlwmLNgyRxyeBkpiQIu5ntmqx5DlAkY"
+    }
+  },
+  "env:development": {},
+  "env:test": {},
+  "env:production": {},
+  "os:android": {},
+  "os:blackberry": {},
+  "os:ios": {},
+  "os:mobileweb": {},
+  "dependencies": {
+    "com.appcelerator.login": "*"
+  }
 }
