@@ -1,0 +1,8 @@
+<Alloy>
+	<Window class="container">
+	    <View class="layoutTop">
+            <Button id="takePhoto" title="Take photo" />
+            <Button id="openMap" title="Map" />
+	    </View>
+	</Window>
+</Alloy>

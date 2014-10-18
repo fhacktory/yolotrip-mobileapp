@@ -1,0 +1,9 @@
+"Window": {
+    navBarHidden: false,
+    exitOnClose: false,
+    translucent: false
+}
+
+".layoutTop": {
+    top: '20dp'
+}
