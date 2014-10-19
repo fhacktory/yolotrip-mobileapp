@@ -8,11 +8,6 @@
     color: 'white'
 },
 
-".layoutTop": {
-    top: '30dp',
-    layout: 'vertical'
-}
-
 ".loader": {
     width: '100%',
     top: '50%'

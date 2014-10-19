@@ -56,10 +56,12 @@
             <uses-permission android:name="com.yolotrip.app.permission.MAPS_RECEIVE"/>
             <permission
                 android:name="com.yolotrip.app.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
-            <application>
+            <application android:theme="@style/Theme.NoActionBar">
                 <meta-data
                     android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyCK7mBA_tcPJoNUA_bksu7bWHN3xfVZwVg"/>
             </application>
+            <!-- Need to specify at least API level 11 for Titanium SDK 3.2.x and prior -->
+            <uses-sdk android:minSdkVersion="14"/>
         </manifest>
     </android>
     <mobileweb>
@@ -73,6 +75,8 @@
     <modules>
         <module platform="android">facebook</module>
         <module platform="iphone">facebook</module>
+        <module platform="iphone" version="2.0.2">ti.map</module>
+        <module platform="android" version="2.1.4">ti.map</module>
     </modules>
     <deployment-targets>
         <target device="android">true</target>

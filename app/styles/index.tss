@@ -1,7 +1,36 @@
+"Window": {
+    exitOnClose: true
+},
+
 ".container": {
-	backgroundColor:"#141925"
+	backgroundColor:"#141925",
+	layout: 'vertical'
 }
 
 "#title": {
     font: {fontSize: '30dp'}
 }
+
+"#message": {
+    top: '20dp',
+    bottom: '5dp',
+    color: "#fff",
+    height: '50dp',
+    left: '20dp',
+    right:'20dp',
+    backgroundColor: "#2D3442",
+    paddingLeft:15,
+    hintText: 'Add a note with your photo...'
+}
+
+"Button": {
+    font: {fontSize: '18dp'},
+    left: '18dp',
+    right:'18dp'
+}
+
+".layoutTop": {
+    top: '30dp',
+    layout: 'vertical',
+    height: '170dp'
+},

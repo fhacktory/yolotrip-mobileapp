@@ -29,10 +29,67 @@ $.login.open();
 
 // Main screen
 var showMainScreen = function() {
+    var Map = require('ti.map');
     var win = $.index;
     var width = win.width;
     var height = win.height;
     var roadTrip = null;
+
+    // Geoloc user
+    var geolocateMe = function(callback) {
+        Ti.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
+        Ti.Geolocation.preferredProvider = "gps";
+        Ti.Geolocation.purpose = "Get position to update roadtrip";
+        Titanium.Geolocation.getCurrentPosition(function(e)
+        {
+            if (e.error)
+            {
+                Ti.API.info(e.error);
+                callback(false);
+                return;
+            }
+    
+            callback({
+                latitude: e.coords.latitude,
+                longitude: e.coords.longitude
+            });
+        });
+    };
+    
+    
+    // Textfield
+    var noteHintText = 'Add a note with your photo...';
+    $.message.value = noteHintText;
+    $.message.addEventListener('focus', function(e) {
+        Ti.API.info([noteHintText, this.value]);
+        if ( this.value == noteHintText ) {
+            this.value = '';
+        }
+    });
+     
+    $.message.addEventListener('blur', function(e) {
+        if (this.value == '') this.value = noteHintText;
+    });
+    
+    // Map
+    var map = Map.createView({
+        mapType: Map.NORMAL_TYPE,
+        animate:true,
+        regionFit:true,
+        userLocation:true
+    });
+    map.addEventListener('complete', function(e) {
+        geolocateMe(function(coords) {
+            map.setLocation({
+                latitude : coords.latitude,
+                longitude : coords.longitude,
+                latitudeDelta : 0.01,
+                longitudeDelta : 0.01,
+                animate: true
+            });
+        });
+    });
+    $.mapview.add(map);
     
     // Get roadtrip of user
     var roadTripClass = Parse.Object.extend("Roadtrip");
@@ -46,31 +103,9 @@ var showMainScreen = function() {
             alert('No roadtrip found');
         }
     });
-
-    // Geoloc user
-    var geolocateMe = function(callback) {
-        Ti.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
-        Ti.Geolocation.preferredProvider = "gps";
-        Ti.Geolocation.purpose = "Get position to update roadtrip";
-        Titanium.Geolocation.getCurrentPosition(function(e)
-        {
-            if (e.error)
-            {
-                Ti.API.info(e.error);
-                alert('Can\'t geoloc you');
-                callback(false);
-                return;
-            }
-    
-            callback({
-                latitude: e.coords.latitude,
-                longitude: e.coords.longitude
-            });
-        });
-    };
     
     // Take and upload a photo
-    var takeAndUploadPhoto = function(location) {
+    var takeAndUploadPhoto = function(message) {
         require('cameraService').getPhoto().then(function(_response) {
             try {
                 var imageBlob = _response.media;
@@ -88,68 +123,51 @@ var showMainScreen = function() {
                 }
                 
                 return require('photoService').savePhoto({
-                    media : smallImage ? smallImage : imageBlob,
-                    location : location
+                    media : smallImage ? smallImage : imageBlob
                 });
             } catch (e) {
                 Ti.API.info(e);
             }
-        }).then(function(_saveResult) {
-          Ti.API.info(JSON.stringify(_saveResult, null, 2));
-          alert('Image uploaded');
-        }, function(_error) {
-            Ti.API.info(_error);
+        }).then(function(photoUploaded) {
+            geolocateMe(function(coords) {
+                if (coords) {
+                    // Create Location on parse
+                    var location = new Parse.Object("Location");
+                    location.set('coordinates', new Parse.GeoPoint({
+                        latitude: coords.latitude,
+                        longitude: coords.longitude
+                    }));
+                    location.set('photosArray', [photoUploaded.model]);
+                    
+                    if (message) {
+                        location.set('messages', [message]);
+                    }
+                    
+                    location.relation('roadtrip').add(roadTrip); // TODO Wait for roadtrip fetch
+                    location.save().then(function(location) {
+                        alert('Votre roadtrip à été mis à jour !');
+                        $.message.value = '';
+                    }, function(error) {
+                        Ti.API.info(error);
+                    });
+                }
+            });
         });
     };
     
     // Update my trip
     $.updateMyTrip.addEventListener('click', function(e) {
-        geolocateMe(function(coords) {
-            if (coords) {
-                // Create Location on parse
-                var location = new Parse.Object("Location");
-                location.set('coordinates', new Parse.GeoPoint({
-                    latitude: coords.latitude,
-                    longitude: coords.longitude
-                }));
-                location.relation('roadtrip').add(roadTrip); // TODO Wait for roadtrip fetch
-                location.save().then(function(location) {
-                    takeAndUploadPhoto(location);
-                }, function(error) {
-                    Ti.API.info(error);
-                });
-            }
-        });
+        var messageTxt = $.message.value;
+        if (messageTxt && messageTxt != noteHintText) {
+            var message = new Parse.Object("Message");
+            message.set('Message', messageTxt);
+            message.save().then(function(messageSaved){
+                takeAndUploadPhoto(messageSaved);
+            });
+        } else {
+            takeAndUploadPhoto();
+        }
     });
-    
-    $.openMap.addEventListener('click', function(e) {
-        var mapController = Alloy.createController('map').getView();
-        mapController.open({modal:true});
-    });
-    
-    Ti.App.addEventListener('app:uploadingPhoto', function(e) {
-        var dialog = Ti.UI.createAlertDialog({
-            cancel: 1,
-            title: 'Add a note with your photo ',
-            style: Ti.UI.iPhone.AlertDialogStyle.PLAIN_TEXT_INPUT,
-            buttonNames: ['Save', 'Cancel']
-        });
-        dialog.addEventListener('click', function(e) {
-            Ti.API.info(e);
-            if (e.index = 0) {
-                var message = new Parse.Object("Message");
-                message.relation('location').add(e.location);
-                message.save().then(function(location) {
-                    Ti.API.info('Message sauvegardé');
-                }, function(error) {
-                    Ti.API.info(error);
-                });
-            }
-        });
-        dialog.show();
-    });
-    
-    Ti.App.fireEvent('app:uploadingPhoto', {});
     
     $.index.open();
 };
