@@ -25,8 +25,7 @@
 
 "Button": {
     font: {fontSize: '18dp'},
-    left: '18dp',
-    right:'18dp'
+    width: '49%'
 }
 
 ".layoutTop": {
@@ -34,3 +33,13 @@
     layout: 'vertical',
     height: '170dp'
 },
+
+"#uploadBtns": {
+    layout: 'composite',
+    left: '20dp',
+    right:'20dp'
+}
+
+"#btnsContainers": {
+    layout: 'horizontal',
+}

@@ -20,7 +20,6 @@ exports.savePhoto = function(_options) {
     photo.set("file", file);
     if (_options.location) {
         photo.relation('location').add(_options.location);
-        Ti.App.fireEvent('app:uploadingPhoto', {location: _options.location});
     }
     
     return photo.save();

@@ -9,8 +9,9 @@
 },
 
 ".loader": {
-    width: '100%',
-    top: '50%'
+    color: '#FFF',
+    left: '20dp',
+    right: '20dp'
 },
 
 ".loader[platform=ios]": {

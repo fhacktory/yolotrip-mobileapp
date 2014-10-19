@@ -3,7 +3,13 @@
         <View class="layoutTop">
             <Label id="title">Loading roadtrip...</Label>
             <TextField id="message"></TextField>
-            <Button id="updateMyTrip" title="Add a photo" />
+            <View id="uploadBtns">
+                <ActivityIndicator id="activityIndicator" class="loader" message="Uploading photo..." />
+                <View id="btnsContainers">
+                    <Button id="photoFromLibrary" title="Library" />
+                    <Button id="photoFromCamera" title="Camera" />
+                </View>
+            </View>
         </View>
         <View id="mapview"></View>
 	</Window>

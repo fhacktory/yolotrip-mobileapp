@@ -3,16 +3,21 @@ var Q = require('q');
 /**
  * 
  */
-exports.getPhoto = function() {
-  var photoSource;
+exports.getPhoto = function(photoSource) {
   var deferred = Q.defer();
 
   Ti.API.debug('Ti.Media.isCameraSupported ' + Ti.Media.isCameraSupported);
 
-  if (!Ti.Media.isCameraSupported) {
-    photoSource = 'openPhotoGallery';
-  } else {
-    photoSource = 'showCamera';
+  /*
+  if (!Ti.Media.isCameraSupported && photoSource == 'showCamera') {
+      photoSource = 'openPhotoGallery';
+  } else if (!photoSource) {
+      photoSource = 'showCamera';
+  }
+  */
+  
+  if (photoSource != 'showCamera' && photoSource != 'openPhotoGallery') {
+      throw('Unsuported photo source '+photoSource);
   }
 
   Titanium.Media[photoSource]({
@@ -40,6 +45,8 @@ exports.getPhoto = function() {
       } else {
         msg = 'Unexpected error: ' + error.code;
       }
+      alert(msg);
+      
       deferred.reject({
         error : error,
         msg : msg

@@ -35,6 +35,17 @@ var showMainScreen = function() {
     var height = win.height;
     var roadTrip = null;
 
+    var lockUpload = function() {
+        $.btnsContainers.hide();
+        $.btnsContainers.height = 0;
+        $.activityIndicator.show();
+    };
+    var unlockUpload = function() {
+        $.btnsContainers.show();
+        $.btnsContainers.height = 'auto';
+        $.activityIndicator.hide();
+    };
+    
     // Geoloc user
     var geolocateMe = function(callback) {
         Ti.Geolocation.accuracy = Titanium.Geolocation.ACCURACY_BEST;
@@ -48,28 +59,13 @@ var showMainScreen = function() {
                 callback(false);
                 return;
             }
-    
+            
             callback({
                 latitude: e.coords.latitude,
                 longitude: e.coords.longitude
             });
         });
     };
-    
-    
-    // Textfield
-    var noteHintText = 'Add a note with your photo...';
-    $.message.value = noteHintText;
-    $.message.addEventListener('focus', function(e) {
-        Ti.API.info([noteHintText, this.value]);
-        if ( this.value == noteHintText ) {
-            this.value = '';
-        }
-    });
-     
-    $.message.addEventListener('blur', function(e) {
-        if (this.value == '') this.value = noteHintText;
-    });
     
     // Map
     var map = Map.createView({
@@ -105,8 +101,8 @@ var showMainScreen = function() {
     });
     
     // Take and upload a photo
-    var takeAndUploadPhoto = function(message) {
-        require('cameraService').getPhoto().then(function(_response) {
+    var takeAndUploadPhoto = function(uploadType, message) {
+        require('cameraService').getPhoto(uploadType).then(function(_response) {
             try {
                 var imageBlob = _response.media;
                 var smallImage = null;
@@ -122,11 +118,13 @@ var showMainScreen = function() {
                     smallImage = imageBlob.imageAsResized(newWidth, newHeight);
                 }
                 
+                lockUpload();
                 return require('photoService').savePhoto({
                     media : smallImage ? smallImage : imageBlob
                 });
             } catch (e) {
                 Ti.API.info(e);
+                unlockUpload();
             }
         }).then(function(photoUploaded) {
             geolocateMe(function(coords) {
@@ -146,9 +144,11 @@ var showMainScreen = function() {
                     location.relation('roadtrip').add(roadTrip); // TODO Wait for roadtrip fetch
                     location.save().then(function(location) {
                         alert('Votre roadtrip à été mis à jour !');
+                        unlockUpload();
                         $.message.value = '';
                     }, function(error) {
                         Ti.API.info(error);
+                        unlockUpload();
                     });
                 }
             });
@@ -156,17 +156,24 @@ var showMainScreen = function() {
     };
     
     // Update my trip
-    $.updateMyTrip.addEventListener('click', function(e) {
+    var uploadPhotoWithMessage = function(uploadType) {
         var messageTxt = $.message.value;
-        if (messageTxt && messageTxt != noteHintText) {
+        if (messageTxt) {
             var message = new Parse.Object("Message");
             message.set('Message', messageTxt);
             message.save().then(function(messageSaved){
-                takeAndUploadPhoto(messageSaved);
+                takeAndUploadPhoto(uploadType, messageSaved);
             });
         } else {
-            takeAndUploadPhoto();
+            takeAndUploadPhoto(uploadType);
         }
+    };
+    
+     $.photoFromLibrary.addEventListener('click', function(e) {
+        uploadPhotoWithMessage('openPhotoGallery');
+    });
+    $.photoFromCamera.addEventListener('click', function(e) {
+        uploadPhotoWithMessage('showCamera');
     });
     
     $.index.open();
